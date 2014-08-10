@@ -31,7 +31,7 @@ function init() {
   socket.on('connect', function () {
     sessionId = socket.io.engine.id;
     console.log('Connected ' + sessionId);
-    socket.emit('newUser', {id: sessionId, name: $('#name').val()});
+    socket.emit('newUser', {id: sessionId, name: $('#name').text()}); //was $('#name').val()
   });
 
   /*
@@ -82,7 +82,7 @@ function init() {
    */
   function sendMessage() {
     var outgoingMessage = $('#outgoingMessage').val();
-    var name = $('#name').val();
+    var name = $('#name').text(); //.val()
     $.ajax({
       url:  '/message',
       type: 'POST',
@@ -120,7 +120,7 @@ function init() {
    emitting the "nameChange" event
    */
   function nameFocusOut() {
-    var name = $('#name').val();
+    var name = $('#name').text(); //.val()
     socket.emit('nameChange', {id: sessionId, name: name});
   }
 
