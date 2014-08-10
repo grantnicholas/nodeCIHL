@@ -14,12 +14,24 @@
  rest should be named after its module name.
 
  */
-var express = require("express")
-  , app = express()
-  , http = require("http").createServer(app)
-  , bodyParser = require("body-parser")
-  , io = require("socket.io").listen(http)
-  , _ = require("underscore");
+var express = require("express");
+var app = express();
+var http = require("http").createServer(app);
+var bodyParser = require("body-parser");
+var io = require("socket.io").listen(http);
+var _ = require("underscore");
+var mongo = require("mongodb");
+var monk = require("monk");
+var db = monk("localhost:27017/chatroom");
+
+//hail marys
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+
+var routes = require('./routes/index');
+//var login = require('./routes/login');
+//var showresults = require('./routes/showresults');
+
 
 /*
  The list of participants in our chatroom.
@@ -30,6 +42,7 @@ var express = require("express")
  }
  */
 var participants = [];
+
 
 /* Server config */
 
@@ -51,7 +64,29 @@ app.use(express.static("public", __dirname + "/public"));
 //Tells server to support JSON requests
 app.use(bodyParser.json());
 
+//hail marys
+app.use(logger('dev'));
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+
+// Make our db accessible to our router
+app.use(function(request,res,next){
+    request.db = db;
+    request.io = io;
+    request._ = _;
+    request.participants = participants;
+    next();
+});
+
+app.use('/', routes);
+//app.use('/login', login);
+//app.use('/showresults', showresults);
+
 /* Server routing */
+/*
+
 
 //Handle route "GET /", as in "http://localhost:8080/"
 app.get("/", function(request, response) {
@@ -60,6 +95,22 @@ app.get("/", function(request, response) {
   response.render("index");
 
 });
+
+//Handle route "GET /", as in "http://localhost:8080/"
+app.get("/login", function(request, response) {
+
+  //Render the view called "index"
+  response.render("login");
+
+});
+
+
+app.post('/thelogin', function(req,res){
+	console.log(req.body.username);
+	console.log(req.body.password);
+	res.send('index');
+});
+
 
 //POST method to create a chat message
 app.post("/message", function(request, response) {
@@ -77,11 +128,68 @@ app.post("/message", function(request, response) {
 
   //Let our chatroom know there was a new message
   io.sockets.emit("incomingMessage", {message: message, name: name});
-
   //Looks good, let the client know
+
+  if(message == ".sign"){
+	var chatroom = request.db.get('chatroom');
+	chatroom.find({username : name},{},function(e,docs){
+		if(typeof docs[0] != undefined && docs[0].currentgameid == 0)
+		{
+			respmessage = docs[0].username + " has signed into the game";
+			io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );	
+		}
+
+    	});
+  }
+
+
+  if(message == ".create"){
+	var chatroom = request.db.get('chatroom');
+	chatroom.find({currentgame: {$exists: true}},{},function(e,docs){
+		if(typeof docs[0] != undefined)
+		{
+			respmessage = "Signups are open for gameID: ";
+			var gamenum = docs[0].currentgame;
+			respmessage += String(gamenum);
+			gamenum++;
+			io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
+			chatroom.update(docs[0]._id, {$set: {currentgame : gamenum}});
+		}
+
+    	});
+  }
+
+
+  if(message == ".lp"){
+	var respmessage = "";
+	var chatroom = request.db.get('chatroom');
+	chatroom.find({},{},function(e,docs){
+		if(e){ console.log("uckedupquery");}
+		if(!e) { console.log("something better showup");}
+		respmessage += String(docs[0].username);
+		io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
+
+    	});
+  }
+
+  if(message == ".me"){
+	var respmessage = "";
+	var chatroom = request.db.get('chatroom');
+	chatroom.find({username: name},{},function(e,docs){
+		if(e){ console.log("uckedupquery");}
+		if(!e) { console.log("something better showup");}
+		respmessage += docs[0].username;
+		console.log(docs[0].currentgameid);
+		io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
+
+    	});
+  }
+
   response.json(200, {message: "Message received"});
 
 });
+
+*/
 
 /* Socket.IO events */
 io.on("connection", function(socket){
@@ -122,3 +230,6 @@ io.on("connection", function(socket){
 http.listen(app.get("port"), app.get("ipaddr"), function() {
   console.log("Server up and running. Go to http://" + app.get("ipaddr") + ":" + app.get("port"));
 });
+
+module.exports = app;
+

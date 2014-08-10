@@ -6,13 +6,13 @@ html
     script(src='//code.jquery.com/jquery-1.11.0.min.js')
     script(src='/socket.io/socket.io.js')
     script(src='/js/index.js')
-    title Super Awesome Chatroom
+    title Chicago Dota Inhouse League
   body
-    h1 Super Awesome Chatroom
+    h1 Chicago Dota Inhouse League
     div
       div.inlineBlock
         span Your name:
-          input(type="text", value="Anonymous")#name
+          #name #{displayname}
         br
         form#messageForm
           textarea(rows="4", cols="50", placeholder="Share something!", maxlength=200)#outgoingMessage
