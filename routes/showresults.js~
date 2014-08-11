@@ -1,0 +1,18 @@
+var express = require('express');
+var router = express.Router();
+
+//Handle route "GET /", as in "http://localhost:8080/"
+router.get("/", function(request, response) {
+
+  //Render the view called "login"
+  response.render("index");
+
+});
+
+router.post('/showresults', function(req,res){
+	console.log(req.body.username);
+	console.log(req.body.password);
+	res.render('showresults', {username : req.body.username, password : req.body.password});
+});
+
+module.exports = router;

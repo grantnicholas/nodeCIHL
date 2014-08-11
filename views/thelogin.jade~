@@ -1,0 +1,16 @@
+doctype html
+html
+	body
+		h1 CIHL LOGIN PAGE
+			div.loginbox
+				form(method="post", action="/thelogin")
+					div(data-role='fieldcontain')
+						fieldset(data-role='controlgroup')
+							label(for='username') username
+								input(id='username',type='text',name='username')
+					div(data-role='fieldcontain')
+						fieldset(data-role='controlgroup')
+							label(for='password') password
+								input(id='password',type='password',name='password')
+					div(data-role='fieldcontain')
+						input(type='submit', value = 'Submit')

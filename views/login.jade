@@ -1,0 +1,10 @@
+extends layout
+
+block content
+    h1 CIHL LOGIN
+    form#formAddUser(name="adduser",method="post",action="/login")
+        input#inputUserName(type="text", placeholder="username", name="username")
+        input#inputUserPass(type="text", placeholder="userpass", name="password")
+        button#btnSubmit(type="submit") submit
+
+

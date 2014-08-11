@@ -1,0 +1,6 @@
+extends layout
+block content
+	span#info Show results
+	p#username {{username}}
+	p#password {{password}}
+		
