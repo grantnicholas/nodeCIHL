@@ -1,32 +1,24 @@
-/*
- Module dependencies:
-
- - Express
- - Http (to run Express)
- - Body parser (to parse JSON requests)
- - Underscore (because it's cool)
- - Socket.IO
-
- It is a common practice to name the variables after the module name.
- Ex: http is the "http" module, express is the "express" module, etc.
- The only exception is Underscore, where we use, conveniently, an
- underscore. Oh, and "socket.io" is simply called io. Seriously, the
- rest should be named after its module name.
-
+/**
+ * Module dependencies:
  */
 var express = require("express");
-var app = express();
 var http = require("http").createServer(app);
 var bodyParser = require("body-parser");
 var io = require("socket.io").listen(http);
 var _ = require("underscore");
 var mongo = require("mongodb");
 var monk = require("monk");
-var db = monk("localhost:27017/chatroom");
 
-//hail marys
+// hail marys
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
+
+
+/**
+ * Load controllers / routes.
+ */
+
+var homeController = require('./routes/')
 
 var routes = require('./routes/index');
 //var login = require('./routes/login');
@@ -44,24 +36,19 @@ var routes = require('./routes/index');
 var participants = [];
 
 
-/* Server config */
+/**
+ * Server configuration.
+ */
 
-//Server's IP address
+
+var app = express();
+var db = monk("localhost:27017/chatroom");
+
 app.set("ipaddr", "127.0.0.1");
-
-//Server's port number
 app.set("port", 8080);
-
-//Specify the views folder
 app.set("views", __dirname + "/views");
-
-//View engine is Jade
 app.set("view engine", "jade");
-
-//Specify where the static content is
 app.use(express.static("public", __dirname + "/public"));
-
-//Tells server to support JSON requests
 app.use(bodyParser.json());
 
 //hail marys
@@ -71,16 +58,24 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-// Make our db accessible to our router
-app.use(function(request,res,next){
-    request.db = db;
-    request.io = io;
-    request._ = _;
-    request.participants = participants;
+app.use(function(req,res,next){
+    req.db = db;
+    req.io = io;
+    req._ = _;
+    req.participants = participants;
     next();
 });
 
-app.use('/', routes);
+/**
+ * Set routes.
+ */
+
+ app.get('/', homeController.index);
+ app.get('/login', userController.getLogin);
+ app.post('/login', userController.postLogin);
+
+
+// app.use('/', routes);
 //app.use('/login', login);
 //app.use('/showresults', showresults);
 
