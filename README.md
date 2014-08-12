@@ -11,3 +11,11 @@ The things that need to be implemented are:
 
 I'm sure there is other stuff but for now that is a good start. 
 
+express
+body-parser
+mongodb
+socket.io
+monk
+morgan
+cookie-parser
+jade

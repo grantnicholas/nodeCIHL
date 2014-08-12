@@ -1,5 +1,11 @@
+// KEVIN: most of this code should go to server.js, instead of all the routing information here
+// I'll reorganize a bit later
+
 var express = require('express');
 var router = express.Router();
+
+var loginController = require('login');
+var homeController = require('home');
 
 //Todo: separate all of these routes into separate page files
 //Not necessary but would make it more organized
@@ -8,7 +14,7 @@ var router = express.Router();
 
 router.get("/", function(request, response) {
 
-  //Render the login view; We do not want people to access the league unless they are logged in. 
+  // Render the login view; We do not want people to access the league unless they are logged in. 
   response.render("login");
 
 });
@@ -20,6 +26,8 @@ router.get("/login", function(request, response) {
   response.render("login", {title : 'Login Page'});
 
 });
+
+router.get("/home", homeController.)
 
 //This was used for testing POST; can be deleted 
 router.get('/showresults', function(req, res) {
