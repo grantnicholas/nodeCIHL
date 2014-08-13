@@ -1,18 +1,5 @@
-/*
- Module dependencies:
-
- - Express
- - Http (to run Express)
- - Body parser (to parse JSON requests)
- - Underscore (because it's cool)
- - Socket.IO
-
- It is a common practice to name the variables after the module name.
- Ex: http is the "http" module, express is the "express" module, etc.
- The only exception is Underscore, where we use, conveniently, an
- underscore. Oh, and "socket.io" is simply called io. Seriously, the
- rest should be named after its module name.
-
+/**
+ * Module dependencies:
  */
 var express = require("express");
 var http = require("http").createServer(app);
@@ -21,13 +8,13 @@ var io = require("socket.io").listen(http);
 var _ = require("underscore");
 var mongo = require("mongodb");
 var monk = require("monk");
-var db = monk("localhost:27017/chatroom");
 
-//hail marys
+// hail marys
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 
 var routeController = require('./routes/router');
+
 //var login = require('./routes/login');
 //var showresults = require('./routes/showresults');
 
@@ -44,7 +31,6 @@ var participants = [];
 
 var app = express();
 /* Server config */
-
 app.set("ipaddr", "127.0.0.1");
 app.set("port", 8080);
 app.set("views", __dirname + "/views");
@@ -59,17 +45,16 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-// Make our db accessible to our router
-app.use(function(request,res,next){
-    request.db = db;
-    request.io = io;
-    request._ = _;
-    request.participants = participants;
+app.use(function(req,res,next){
+    req.db = db;
+    req.io = io;
+    req._ = _;
+    req.participants = participants;
     next();
 });
 
-
 app.use('/', routeController);
+
 //app.use('/login', login);
 //app.use('/showresults', showresults);
 
