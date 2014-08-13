@@ -4,31 +4,6 @@
 var express = require('express');
 var router = express.Router();
 
-var loginController = require('login');
-var homeController = require('home');
-
-//Todo: separate all of these routes into separate page files
-//Not necessary but would make it more organized
-
-//Handle route "GET /", as in "http://localhost:8080/"
-
-router.get("/", function(request, response) {
-
-  // Render the login view; We do not want people to access the league unless they are logged in. 
-  response.render("login");
-
-});
-
-
-router.get("/login", function(request, response) {
-
-  //Render the view called "login"
-  response.render("login", {title : 'Login Page'});
-
-});
-
-router.get("/home", homeController.)
-
 //This was used for testing POST; can be deleted 
 router.get('/showresults', function(req, res) {
   res.render('showresults', {username : "helloworld"});

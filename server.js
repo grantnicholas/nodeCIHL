@@ -15,7 +15,6 @@
 
  */
 var express = require("express");
-var app = express();
 var http = require("http").createServer(app);
 var bodyParser = require("body-parser");
 var io = require("socket.io").listen(http);
@@ -28,7 +27,7 @@ var db = monk("localhost:27017/chatroom");
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 
-var routes = require('./routes/index');
+var routeController = require('./routes/router');
 //var login = require('./routes/login');
 //var showresults = require('./routes/showresults');
 
@@ -43,25 +42,14 @@ var routes = require('./routes/index');
  */
 var participants = [];
 
-
+var app = express();
 /* Server config */
 
-//Server's IP address
 app.set("ipaddr", "127.0.0.1");
-
-//Server's port number
 app.set("port", 8080);
-
-//Specify the views folder
 app.set("views", __dirname + "/views");
-
-//View engine is Jade
 app.set("view engine", "jade");
-
-//Specify where the static content is
 app.use(express.static("public", __dirname + "/public"));
-
-//Tells server to support JSON requests
 app.use(bodyParser.json());
 
 //hail marys
@@ -80,7 +68,8 @@ app.use(function(request,res,next){
     next();
 });
 
-app.use('/', routes);
+
+app.use('/', routeController);
 //app.use('/login', login);
 //app.use('/showresults', showresults);
 
