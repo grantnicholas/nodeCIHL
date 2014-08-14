@@ -8,35 +8,29 @@ var io = require("socket.io").listen(http);
 var _ = require("underscore");
 var mongo = require("mongodb");
 var monk = require("monk");
-
-// hail marys
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 
-var routeController = require('./routes/router');
-
-/*
- The list of participants in our chatroom.
- The format of each participant will be:
- {
- id: "sessionId",
- name: "participantName"
- }
+/**
+ * Load controllers.
  */
-var participants = [];
+
+var homeController = require('./routes/home');
+var userController = require('./routes/user');
+var chatController = require('./routes/chat');
 
 var app = express();
 var db = monk("localhost:27017/chatroom");
 
-/* Server config */
+/**
+ * Server config.
+ */
 app.set("ipaddr", "127.0.0.1");
 app.set("port", 8080);
 app.set("views", __dirname + "/views");
 app.set("view engine", "jade");
 app.use(express.static("public", __dirname + "/public"));
 app.use(bodyParser.json());
-
-//hail marys
 app.use(logger('dev'));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({
@@ -51,9 +45,26 @@ app.use(function(req,res,next){
     next();
 });
 
-app.use('/', routeController);
+/**
+ * Application routes.
+ */
+app.get('/', homeController.index);
+app.get('/login', userController.getLogin);
+app.post('/login', userController.postLogin);
 
-/* Socket.IO events */
+/*
+ The list of participants in our chatroom.
+ The format of each participant will be:
+ {
+ id: "sessionId",
+ name: "participantName"
+ }
+ */
+var participants = [];
+
+/**
+ * Socket IO events
+ */
 io.on("connection", function(socket){
 
   /*
