@@ -1,35 +1,4 @@
-// KEVIN: most of this code should go to server.js, instead of all the routing information here
-// I'll reorganize a bit later
-
-var express = require('express');
-var router = express.Router();
-
-
-//Todo: separate all of these routes into separate page files
-//Not necessary but would make it more organized
-
-//Handle route "GET /", as in "http://localhost:8080/"
-
-router.get("/", function(request, response) {
-
-  // Render the login view; We do not want people to access the league unless they are logged in. 
-  response.render("login");
-
-});
-
-
-router.get("/login", function(request, response) {
-
-  //Render the view called "login"
-  response.render("login", {title : 'Login Page'});
-
-});
-
-
-//This was used for testing POST; can be deleted 
-router.get('/showresults', function(req, res) {
-  res.render('showresults', {username : "helloworld"});
-});
+// REORGANIZING
 
 //POST method to handle all messaging from both players and the server
 router.post("/message", function(request, response) {
