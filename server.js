@@ -2,6 +2,8 @@
  * Module dependencies:
  */
 var express = require("express");
+var app = express();
+
 var http = require("http").createServer(app);
 var bodyParser = require("body-parser");
 var io = require("socket.io").listen(http);
@@ -11,6 +13,8 @@ var monk = require("monk");
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 
+var db = monk("localhost:27017/chatroom");
+
 /**
  * Load controllers.
  */
@@ -18,9 +22,6 @@ var cookieParser = require('cookie-parser');
 var homeController = require('./routes/home');
 var userController = require('./routes/user');
 var chatController = require('./routes/chat');
-
-var app = express();
-var db = monk("localhost:27017/chatroom");
 
 /**
  * Server config.
