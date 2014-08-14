@@ -4,8 +4,6 @@
 var express = require('express');
 var router = express.Router();
 
-var loginController = require('login');
-var homeController = require('home');
 
 //Todo: separate all of these routes into separate page files
 //Not necessary but would make it more organized
@@ -27,7 +25,6 @@ router.get("/login", function(request, response) {
 
 });
 
-router.get("/home", homeController.)
 
 //This was used for testing POST; can be deleted 
 router.get('/showresults', function(req, res) {
