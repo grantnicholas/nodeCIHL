@@ -1,6 +1,6 @@
-/**
- * Module dependencies:
- */
+
+//Module dependencies:
+
 var express = require("express");
 var app = express();
 
@@ -10,22 +10,22 @@ var io = require("socket.io").listen(http);
 var _ = require("underscore");
 var mongo = require("mongodb");
 var monk = require("monk");
-var logger = require('morgan');
+//var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 
 var db = monk("localhost:27017/chatroom");
 
-/**
- * Load controllers.
- */
+
+//Load controllers.
+
 
 var homeController = require('./routes/home');
 var userController = require('./routes/user');
 var chatController = require('./routes/chat');
 
-/**
- * Server config.
- */
+
+//Server config.
+
 app.set("ipaddr", "127.0.0.1");
 app.set("port", 8080);
 app.set("views", __dirname + "/views");
@@ -46,54 +46,29 @@ app.use(function(req,res,next){
     next();
 });
 
-/**
- * Application routes.
- */
+
+//Application routes.
+ 
 app.get('/', homeController.index);
 app.get('/login', userController.getLogin);
 app.post('/login', userController.postLogin);
+app.post('/chat', chatController.postMessage);
 
-/*
- The list of participants in our chatroom.
- The format of each participant will be:
- {
- id: "sessionId",
- name: "participantName"
- }
- */
+
+
+/* Socket IO events
+The basic idea with socket.io: socket.on("somepredefinedevent", function() {io.sockets.emit("emitThisInformationToAllClientsAndCaptureWithJquery", {the info emitted is json in here}); });
+*/
+ 
 var participants = [];
 
-/**
- * Socket IO events
- */
 io.on("connection", function(socket){
 
-	console.log('a user connected');
-  /*
-   When a new user connects to our server, we expect an event called "newUser"
-   and then we'll emit an event called "newConnection" with a list of all
-   participants to all connected clients
-   */
   socket.on("newUser", function(data) {
     participants.push({id: data.id, name: data.name});
     io.sockets.emit("newConnection", {participants: participants});
   });
 
-  /*
-   When a user changes his name, we are expecting an event called "nameChange"
-   and then we'll emit an event called "nameChanged" to all participants with
-   the id and new name of the user who emitted the original message
-   */
-  socket.on("nameChange", function(data) {
-    _.findWhere(participants, {id: socket.id}).name = data.name;
-    io.sockets.emit("nameChanged", {id: data.id, name: data.name});
-  });
-
-  /*
-   When a client disconnects from the server, the event "disconnect" is automatically
-   captured by the server. It will then emit an event called "userDisconnected" to
-   all participants with the id of the client that disconnected
-   */
   socket.on("disconnect", function() {
     participants = _.without(participants,_.findWhere(participants, {id: socket.id}));
     io.sockets.emit("userDisconnected", {id: socket.id, sender:"system"});

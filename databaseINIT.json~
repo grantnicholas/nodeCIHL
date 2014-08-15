@@ -1,0 +1,4 @@
+newusers = [{ "username" : "KnivesChau", "password" : "unsafepassword", "currentgameid" : 0,  "mmr" : 5400, "wins" : 0, "losses" : 0, "email" : "grantnicholas2015@u.northwestern.edu", "loggedin" : 0 }, { "username" : "aspin", "password" : "datpasstho", "currentgameid" : 0,  "mmr" : 4400, "wins" : 0, "losses" : 0, "email" : "imtoolazytocheckyouremail@aol.com", "loggedin" : 0 }, { "username" : "justsozen", "currentgameid" : 0,  "mmr" : 4000, "wins" : 0, "losses" : 0, "email" : "imtoolazytocheckyouremailtoo@aol.com", "loggedin" : 0 }]
+
+var newgame = { "gameid" : 0, "status" : "lobby", "players" : [] }
+

@@ -51,13 +51,6 @@ function init() {
     $('#' + data.id).remove();
   });
 
-  /*
-   When the server fires the "nameChanged" event, it means we
-   must update the span with the given ID accordingly
-   */
-  socket.on('nameChanged', function (data) {
-    $('#' + data.id).html(data.name + ' ' + (data.id === sessionId ? '(You)' : '') + '<br />');
-  });
 
   /*
    When receiving a new chat message with the "incomingMessage" event,
