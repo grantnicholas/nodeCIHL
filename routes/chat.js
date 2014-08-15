@@ -10,8 +10,6 @@ exports.postMessage = function(request, response) {
   //Emit incomingMessage and capture it in index.js for the clients to render
   request.io.sockets.emit("incomingMessage", {message: message, name: name});
   
-
-
   /*-------------Handle special commands that deal with interfacing with the league bot---------------*/
   
   var db = request.db;
@@ -38,7 +36,6 @@ exports.postMessage = function(request, response) {
   }
 
 //And sign out to leave a game 
-
   if(message == ".out"){
 	var chatroom = db.get('chatroom');
 	chatroom.find({status : "lobby"},{},function(e,docs){
@@ -54,7 +51,6 @@ exports.postMessage = function(request, response) {
 	});
 
   }
-
 
   //Create a new game only if there is not an existing game in the queue
   if(message == ".create"){
@@ -77,9 +73,6 @@ exports.postMessage = function(request, response) {
 		}
 
     	});
-		
-	
-
   }
 
   //List all the players in the current game queue
@@ -93,10 +86,8 @@ exports.postMessage = function(request, response) {
 			respmessage += docs[0].players[i] + " | ";
 		}
 		request.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
-
     	});
   }
-
 
   //Look up the stats of the messanger and display them in chat
   if(message == ".me"){
@@ -110,7 +101,5 @@ exports.postMessage = function(request, response) {
 
     	});
   }
-
   response.json(200, {message: "Message received"});
-
 }
