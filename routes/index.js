@@ -16,7 +16,7 @@ router.post("/message", function(request, response) {
 
   //Let our chatroom know there was a new message
   request.io.sockets.emit("incomingMessage", {message: message, name: name});
-  //Looks good, let the client know
+  
 
   //Get mongodb var
   var db = request.db;

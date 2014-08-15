@@ -1,4 +1,7 @@
-exports.postMessage = function(request, response) {
+// REORGANIZING
+
+//POST method to handle all messaging from both players and the server
+router.post("/message", function(request, response) {
 
   //The request body expects a param named "message"
   var message = request.body.message;
@@ -13,7 +16,7 @@ exports.postMessage = function(request, response) {
 
   //Let our chatroom know there was a new message
   request.io.sockets.emit("incomingMessage", {message: message, name: name});
-  
+  //Looks good, let the client know
 
   //Get mongodb var
   var db = request.db;
@@ -84,4 +87,29 @@ exports.postMessage = function(request, response) {
 
   response.json(200, {message: "Message received"});
 
-}
+});
+
+
+//The POST function that submits upon clicking the form button 
+//Verify the username and password are correct then log the user in, forward them to the inhouse league chat, and set their username in the chat to be equal to the given username
+router.post('/login', function(req,res){
+	var un = req.body.username;
+	var pass = req.body.password;
+	var db = req.db;
+	var chatroom = db.get('chatroom');
+	chatroom.find({ $and: [{username : un}, {password : pass}] }, function(e,docs){
+
+		if(!docs[0]){ 
+			res.send("Invalid username or password")
+		}
+		else {
+			res.location('index');
+			res.render('index', {displayname : un});
+			
+		}
+	}); 
+});
+
+
+module.exports = router;
+

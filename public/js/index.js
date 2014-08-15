@@ -84,7 +84,7 @@ function init() {
     var outgoingMessage = $('#outgoingMessage').val();
     var name = $('#name').text(); //.val()
     $.ajax({
-      url:  '/message',
+      url:  '/chat',
       type: 'POST',
       contentType: 'application/json',
       dataType: 'json',
