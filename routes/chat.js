@@ -17,36 +17,39 @@ exports.postMessage = function(request, response) {
   if(message == ".sign"){
 	var chatroom = request.db.get('chatroom');
 	chatroom.find({status : "lobby"},{},function(e,docs){
-		var isAlreadySigned = false;
-		for (var i in docs[0].players){
-			if(docs[0].players[i] == name) {isAlreadySigned = true;}
+		if(typeof docs[0] != "undefined"){
+			var isAlreadySigned = false;
+			for (var i in docs[0].players){
+				if(docs[0].players[i] == name) {isAlreadySigned = true;}
+			}
+			if(typeof docs[0] != undefined && !isAlreadySigned)
+			{
+				chatroom.update({status : "lobby"}, {$push: {players: name} });
+				respmessage = name + " has signed into the game";
+				request.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );	
+			}
+			else{
+				respmessage = "Error: cannot sign into game";
+				request.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
+			}
 		}
-		if(typeof docs[0] != undefined && !isAlreadySigned)
-		{
-			chatroom.update({status : "lobby"}, {$push: {players: name} });
-			respmessage = name + " has signed into the game";
-			request.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );	
-		}
-		else{
-			respmessage = "Error: cannot sign into game";
-			request.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
-		}
-
-    	});
+    });
   }
 
 //And sign out to leave a game 
   if(message == ".out"){
 	var chatroom = db.get('chatroom');
 	chatroom.find({status : "lobby"},{},function(e,docs){
-		var isAlreadySigned = false;
-		for (var i in docs[0].players){
-			if(docs[0].players[i] == name) {isAlreadySigned = true;}
-		}
-		if(isAlreadySigned){
-			chatroom.update({status : "lobby"}, {$pull: {players: name} });
-			respmessage = name + " has signed out of the game";
-			request.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
+		if(typeof docs[0] != "undefined"){
+			var isAlreadySigned = false;
+			for (var i in docs[0].players){
+				if(docs[0].players[i] == name) {isAlreadySigned = true;}
+			}
+			if(isAlreadySigned){
+				chatroom.update({status : "lobby"}, {$pull: {players: name} });
+				respmessage = name + " has signed out of the game";
+				request.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
+			}
 		}
 	});
 
@@ -56,15 +59,14 @@ exports.postMessage = function(request, response) {
   if(message == ".create"){
 	var respmessage = "";
 	var chatroom = request.db.get('chatroom');
-	chatroom.find({status : "lobby"}, {}, function(e,docs){
-		if(!docs[0]){
+	chatroom.find({status : "lobby"}, {}, function(e,documents){
+		if(typeof documents[0] == "undefined"){
 			chatroom.find({ $query: {gameid: {$exists: true} }, $orderby: { gameid: -1  } },function(e,docs){
 				var newgameid = docs[0].gameid + 1;
-				var newgame = [{ "gameid" : newgameid, "numplayers": 0, "status" : "lobby" }]
+				var newgame = [{ "gameid" : newgameid, "status": "lobby", "players" : [name], "owner" : name }]
 				chatroom.insert(newgame);
 				respmessage = "Signups are open for gameID: " + newgameid;
 				request.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
-				//chatroom.update(docs[0]._id, {$set: {currentgame : gamenum}});
 			});
 		}
 		else{
@@ -74,19 +76,36 @@ exports.postMessage = function(request, response) {
 
     	});
   }
+  
+  //Destroy a game if the owner
+  
+  if(message == ".destroy"){
+	var respmessage = "";
+	var chatroom = request.db.get('chatroom');
+	chatroom.find({status : "lobby"}, {}, function(e,docs){
+		if(typeof docs[0] != "undefined"){
+			if(name == docs[0].owner){
+				chatroom.remove({status : "lobby"});
+				respmessage = docs[0].gameid + " has been closed by " + name;
+				request.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
+			}
+		}
+
+    });
+  }
 
   //List all the players in the current game queue
   if(message == ".lp"){
 	var respmessage = "Listing Players: ";
 	var chatroom = request.db.get('chatroom');
 	chatroom.find({status : "lobby"}, {}, function(e,docs){
-		if(e){ console.log("uckedupquery");}
-		if(!e) { console.log("something better showup");}
-		for (var i in docs[0].players){
-			respmessage += docs[0].players[i] + " | ";
+		if(typeof docs[0] != "undefined"){
+			for (var i in docs[0].players){
+				respmessage += docs[0].players[i] + " | ";
+			}
+			request.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
 		}
-		request.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
-    	});
+	});
   }
 
   //Look up the stats of the messanger and display them in chat
