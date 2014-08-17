@@ -1,4 +1,7 @@
 exports.getLogin = function(req, res) {
+	if (req.session.user) {
+		return res.redirect('/chat');
+	}
 	res.render('login', {
 		title: 'Login'
 	});
@@ -15,10 +18,33 @@ exports.postLogin = function(req, res) {
 			res.send("Invalid username or password")
 		}
 		else {
-			res.location('index');
-			res.render('index', {displayname : un});
-			
+			req.session.un = un;
+			req.session.user = docs[0];
+			res.redirect('/chat');			
 		}
 	}); 
+};
 
+exports.logout = function(req, res) {
+	req.session = null;
+	res.redirect('/');
 }
+
+exports.getRegister = function(req, res) {
+	if (req.session.user) {
+		return res.redirect('/chat');
+	}
+	res.render('register', {
+		title: 'Create Accout'
+	});
+};
+
+exports.postRegister = function(req, res) {
+	if (req.session.user) {
+		return res.redirect('/chat');
+	}
+	res.render('register', {
+		title: 'Create Accout'
+	});
+};
+

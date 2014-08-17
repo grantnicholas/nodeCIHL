@@ -8,6 +8,9 @@
 
 ### Changelog:
 
+#### 8/15/2014 - Kevin
+Added `cookie-session` module -- be sure to `npm install` it. Basically set up a session cookie when users log in; information can be accessed at `req.session.un` or `req.session.user`. Moved chat rendering from `user` controller to `chat` controller.
+
 #### 8/13/2014 - Kevin
 Haven't done that much, but spent some time reorganizing and cleaning up code. Most of the routing (`router.get` `router.post` etc.) should be handled within `server.js`, but I made a new `router.js` file, which then delegates to various other controllers. Right now, I've made:
 * `home` -- don't worry about this one yet. It should be more pretty and link to an about page, instructions on joining, how it works, etc.

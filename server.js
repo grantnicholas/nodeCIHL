@@ -12,6 +12,7 @@ var mongo = require("mongodb");
 var monk = require("monk");
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
+var cookieSession = require('cookie-session');
 
 var db = monk("localhost:27017/chatroom");
 
@@ -37,6 +38,10 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+app.use(cookieSession({
+  name: 'cihl-express-cookie',
+  secret: 'ourSecret'
+}))
 
 app.use(function(req,res,next){
     req.db = db;
@@ -46,15 +51,15 @@ app.use(function(req,res,next){
     next();
 });
 
-
 //Application routes.
  
 app.get('/', homeController.index);
 app.get('/login', userController.getLogin);
 app.post('/login', userController.postLogin);
+app.get('/register', userController.getRegister);
+app.post('/register', userController.postRegister);
+app.get('/chat', chatController.getChatroom);
 app.post('/chat', chatController.postMessage);
-
-
 
 /* Socket IO events
 The basic idea with socket.io: socket.on("somepredefinedevent", function() {io.sockets.emit("emitThisInformationToAllClientsAndCaptureWithJquery", {the info emitted is json in here}); });
