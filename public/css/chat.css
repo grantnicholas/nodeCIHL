@@ -1,0 +1,31 @@
+#main-chat {
+	padding: 0 3em 0 3em;
+	height: 1000px; /* figure something else out here */
+}
+
+#main-row {
+	height: 100%;
+}
+
+#participants {
+	border-left: 1px solid #eee;
+	height: 100%;
+}
+
+#text-row {
+	width: 100%;
+}
+
+#messageForm {
+	width: 100%;
+}
+
+#outgoingMessage {
+	width: 100%;
+}
+
+.navbar-fixed-bottom {
+	padding: 3em;
+	background: white;
+	border: none;
+}

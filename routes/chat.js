@@ -1,6 +1,9 @@
 exports.getChatroom = function(req, res) {
 	res.location('chat');
-	res.render('chat', {displayname: req.session.un});
+	res.render('chat', {
+		title: 'Chat',
+		displayname: req.session.un
+	});
 }
 
 exports.postMessage = function(req, res) {
@@ -10,7 +13,7 @@ exports.postMessage = function(req, res) {
     return res.json(400, {error: "Message is invalid"});
   }
 
-  var name = req.body.name;
+  var name = req.session.un;
 
   //Emit incomingMessage and capture it in index.js for the clients to render
   req.io.sockets.emit("incomingMessage", {message: message, name: name});

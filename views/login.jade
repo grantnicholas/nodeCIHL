@@ -1,10 +1,18 @@
 extends layout
 
 block content
-    h1 CIHL LOGINfff
-    form#formAddUser(name="adduser",method="post",action="/login")
-        input#inputUserName(type="text", placeholder="username", name="username")
-        input#inputUserPass(type="password", placeholder="password", name="password")
-        button#btnSubmit(type="submit") submit
+  .row#login-row
+    .col-md-4.col-md-offset-4
+      h1.text-center CIHL LOGIN
+      form(name="addUser", role="form", method="post",action="/login")
+        .form-group
+          label.control-label(for='username') Username
+          input.form-control(type="text", placeholder="Username", name="username", autofocus=true)
+        .form-group
+          label.control-label(for='password') Password
+          input.form-control(type="password", placeholder="Password", name="password")
+        .form-group.text-center
+          button.btn.btn-primary#login(type="submit") Login
+          a.btn.btn-primary(href="/register") Sign Up
 
 

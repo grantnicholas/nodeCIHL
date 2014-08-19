@@ -56,6 +56,7 @@ app.use(function(req,res,next){
 app.get('/', homeController.index);
 app.get('/login', userController.getLogin);
 app.post('/login', userController.postLogin);
+app.get('/logout', userController.logout);
 app.get('/register', userController.getRegister);
 app.post('/register', userController.postRegister);
 app.get('/chat', chatController.getChatroom);

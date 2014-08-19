@@ -44,7 +44,7 @@ exports.postRegister = function(req, res) {
 		return res.redirect('/chat');
 	}
 	res.render('register', {
-		title: 'Create Accout'
+		title: 'Create Account'
 	});
 };
 
