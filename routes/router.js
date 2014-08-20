@@ -12,6 +12,8 @@ router.get('/', function(req, res) {
 })
 router.get('/login', userController.getLogin);
 router.post('/login', userController.postLogin);
+router.post('/login', userController.postRegister);
+//router.get('/validate', userController.getValidateRegister)
 router.post('/chat', chatController.postMessage);
 
 module.exports = router;
