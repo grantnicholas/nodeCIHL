@@ -8,7 +8,7 @@ block content
       if success == true
         div#myAlert.alert.alert-success.text-center(data-alert="alert")
           div=status
-      else
+      if success == false
         div#myAlert2.alert.alert-error.alert-danger.text-center(data-alert="alert")
           div=status
       h1.text-center CIHL LOGIN
