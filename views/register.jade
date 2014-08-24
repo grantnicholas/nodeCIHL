@@ -3,7 +3,8 @@ extends layout
 block content
   .row#login-row
     .col-md-4.col-md-offset-4
-      h1.text-center CIHL LOGIN
+      h1.text-center CIHL REGISTRATION 
+      a.btn.btn-default.center-block(href="/login") BACK TO LOGIN
       form(name="addUser", role="form", method="post",action="/register")
         .form-group
           label.control-label(for='username') Username
