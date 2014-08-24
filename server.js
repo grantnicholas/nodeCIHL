@@ -16,9 +16,7 @@ var cookieSession = require('cookie-session');
 
 var db = monk("localhost:27017/chatroom");
 
-
 //Load controllers.
-
 
 var homeController = require('./routes/home');
 var userController = require('./routes/user');
