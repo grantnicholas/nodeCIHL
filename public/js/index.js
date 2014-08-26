@@ -117,6 +117,31 @@ function init() {
     socket.emit('nameChange', {id: sessionId, name: name});
   }
 
+/*NEW stuff I need to review ajax
+  socket.on('validateData', function (data) {
+    var username = data.username;
+    var password = data.password;
+    $('#messages').prepend('<b>' + name + '</b><br />' + message + '<hr />');
+  });
+
+  function validateData() {
+    var outgoingMessage = $('#outgoingMessage').val();
+    var name = $('#name').text(); //.val()
+    $.ajax({
+      url:  '/chat',
+      type: 'POST',
+      contentType: 'application/json',
+      dataType: 'json',
+      data: JSON.stringify({message: outgoingMessage, name: name})
+    });
+  }
+
+  function validateData(event) {
+    $('#register').click(function(){
+ 	alert('hello world');
+    });
+  }
+*/
   /* Elements setup */
   $('#outgoingMessage').on('keydown', outgoingMessageKeyDown);
   $('#outgoingMessage').on('keyup', outgoingMessageKeyUp);

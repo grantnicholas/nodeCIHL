@@ -1,24 +1,40 @@
 doctype html
 html
   head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title #{title} | Chicago Inhouse Dota 2 League
+    link(rel='stylesheet', href='css/bootstrap.css')
     link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Open+Sans')
-    link(rel='stylesheet', href='/css/style.css')
+    link(rel='stylesheet', href='/css/main.css')
+    link(rel='stylesheet', href='/css/chat.css')
     script(src='//code.jquery.com/jquery-1.11.0.min.js')
     script(src='/socket.io/socket.io.js')
     script(src='/js/index.js')
-    title Chicago Dota Inhouse League
+    title Chicago Inhouse Dota 2 League
   body
-    h1 Chicago Dota Inhouse League
-    div
-      div.inlineBlock
-        span Your name
-          #name #{displayname}
-        br
-        form#messageForm
-          textarea(rows="4", cols="50", placeholder="Share something!", maxlength=200)#outgoingMessage
-          input(type="button", value="Share", disabled=true)#send
-      div.inlineBlock.topAligned
-        b Participants
-        br
-        div#participants
-    div#messages
+    .navbar.navbar-default.navbar-static-top
+      .container-fluid
+        .navbar-header
+          .navbar-brand Chicago Inhouse Dota 2 League
+        .collapse.navbar-collapse
+          ul.nav.navbar-nav.navbar-right
+            li.white: a(href='#') #{displayname}
+            li.white: a(href='#') My Preferences
+            li.white: a(href='/logout') Logout
+
+    .container-fluid#main-chat
+      .row#main-row
+        .col-md-9#messages
+
+        .col-md-3#participants
+
+    .navbar.navbar-default.navbar-fixed-bottom
+      .container-fluid
+        .row#text-row
+          span Your name
+            #name #{displayname}
+          br
+          form#messageForm
+            textarea(rows="4", cols="50", placeholder="Share something!", maxlength=200)#outgoingMessage

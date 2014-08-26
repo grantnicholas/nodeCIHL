@@ -6,7 +6,17 @@
 3. Make the login actually secure. I barebonesd everything and hacked it together but I imagine people have an incentive to find bugs to up their mmr.
 4. Put it on Heroku.
 
+##### Visual Stuff:
+1. Fade out scroll bars when focus isn't on that part.
+2. Change highlight color of message text.
+3. Everything else.
+
 ### Changelog:
+
+#### 8/19/2014 - Grant
+Added register functionality including simple error checking to avoid duplicating usernames or emailaddresses. Also modified the login.jade and register.jade views to include an error/success alert with a message depending on if the register proceeded correctly. 
+In the future will need to either use ajax or better routing to take the user back to the register page without losing the inputted information when the user fails to register properly. 
+A helpful tip when making new accounts: all the users start out with 3000 mmr by default so to delete all the new accounts you made just run db.chatroom.remove({mmr: 3000});
 
 #### 8/15/2014 - Kevin
 Added `cookie-session` module -- be sure to `npm install` it. Basically set up a session cookie when users log in; information can be accessed at `req.session.un` or `req.session.user`. Moved chat rendering from `user` controller to `chat` controller.
