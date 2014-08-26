@@ -30,7 +30,7 @@ exports.postMessage = function(req, res) {
 			for (var i in docs[0].players){
 				if(docs[0].players[i] == name) {isAlreadySigned = true;}
 			}
-			if(typeof docs[0] != undefined && !isAlreadySigned)
+			if(typeof docs[0] != undefined && !isAlreadySigned && docs[0].players.length <10)
 			{
 				chatroom.update({status : "lobby"}, {$push: {players: name} });
 				respmessage = name + " has signed into the game";
@@ -84,7 +84,94 @@ exports.postMessage = function(req, res) {
 
     	});
   }
-  
+
+//Helper functions to sort the teams by skill. The array of players is sorted from highest rated to 
+//lowest rated and then the following teams are made by rank:
+//Radiant is 1/4/6/8/10
+//Dire is 2/3/5/7/9
+
+//The sortArray function uses an in place insertion sort
+
+var getMMR = function(name){
+	var chatroom = req.db.get('chatroom');
+	chatroom.find({username: name}, {}, function(e,docs){
+		return docs[0].mmr;
+	});
+}  
+
+var moveStuff = function(arr,remove,add){
+	var tmp = arr[remove];
+	for(var i=remove; i>add; i--){
+		arr[i] = arr[i-1];
+	}
+	arr[add] = tmp;
+}
+
+var sortArray = function(arr){
+	for(var i=1; i<arr.length; i++){
+		for(var j=0; j<i; j++){
+			if( getMMR(arr[i].username)< getMMR(arr[j].username) ){
+				moveStuff(arr,i,j);
+			}
+		}
+	
+	}
+}
+
+  //If there are 10 people in the new game, close the signups of the game, and assign the teams
+  if(message == ".start"){
+	var respmessage = "";
+	var chatroom = req.db.get('chatroom');
+	chatroom.find({status : "lobby"}, {}, function(e,documents){
+		if(typeof documents[0] != "undefined"){
+			if(documents[0].owner == name && documents[0].players.length == 10){
+				sortArray(documents[0].players);
+				chatroom.update({status: "lobby"},{ $set: { status : "inProgress" }});
+
+				respmessage = "Signups are closed for gameID: " + documents[0].gameid;
+				respmessage += "\n Radiant: " + documents[0].players[0] + " | " +documents[0].players[3] + " | " +documents[0].players[5] + " | " + documents[0].players[7] + " | " + documents[0].players[9];
+				respmessage += "\n Dire   : " + documents[0].players[1] + " | " +documents[0].players[2] + " | " +documents[0].players[4] + " | " + documents[0].players[6] + " | " + documents[0].players[8];
+				respmessage += "\n Lobby password is cihl" + documents[0].gameid;
+				req.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
+
+			}
+		}
+
+    });
+  }
+
+  /* REPORT FUNCTIONS in progress
+  if(message == ".radiant"){
+	var respmessage = "";
+	var chatroom = req.db.get('chatroom');
+	chatroom.find({status : "lobby"}, {}, function(e,docs){
+		if(typeof docs[0] != "undefined"){
+			if(name == docs[0].owner){
+				chatroom.remove({status : "lobby"});
+				respmessage = 
+				req.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
+			}
+		}
+
+    });
+  }
+    
+  if(message == ".dire"){
+	var respmessage = "";
+	var chatroom = req.db.get('chatroom');
+	chatroom.find({status : "lobby"}, {}, function(e,docs){
+		if(typeof docs[0] != "undefined"){
+			if(name == docs[0].owner){
+				chatroom.remove({status : "lobby"});
+				respmessage = docs[0].gameid + " has been closed by " + name;
+				req.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
+			}
+		}
+
+    });
+  }
+  */
+
   //Destroy a game if the owner
   if(message == ".destroy"){
 	var respmessage = "";
