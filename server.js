@@ -14,7 +14,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var cookieSession = require('cookie-session');
 
-var db = monk("localhost:27017/chatroom");
+var db = monk("localhost:27017/newchatroom");
 
 
 //Load controllers.
