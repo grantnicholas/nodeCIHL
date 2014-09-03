@@ -7,8 +7,11 @@ var newgame = { "gameid" : 0, "status" : "lobby", "players" : [{username:"Knives
 
 
 { "gameid" : 1, "status" : "lobby", "players" : [{username:"a",result:1},{username:"b",result:1},{username:"c",result:1},{username:"d",result:1},{username:"e",result:1},{username:"f",result:-1},{username:"g",result:-1},{username:"h",result:-1},{username:"i",result:-1} ], "owner" : "KnivesChau" }
+db.newchatroom.remove({status : "inProgress"})
+
 
 { "username" : "a", "password" : "unsafepassword", "currentgameid" : 0,  "mmr" : 5300, "wins" : 0, "losses" : 0, "email" : "grantnicholas2015@u.northwestern.edu", "loggedin" : 0 }
+
 
 
 
