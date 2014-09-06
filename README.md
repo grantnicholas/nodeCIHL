@@ -13,6 +13,22 @@
 
 ### Changelog:
 
+#### 9/06-2014 - Grant
+I was having a bit of trouble with mongo and its large files sizes with git, for now we are ok but if the files grow any larger they will be greater than the 100mb limit github has.
+The chatroom collection is now called newchatroom and is located at ./data. So to run mongod `sudo mongod --dbpath nodeCIHL/data`. For CLI mongod run mongo then use newchatroom then you can run your queries as usual. In the databaseinit file I put some helpful commands I used to simulate having 10 people in a lobby to test the report functions. 
+
+Functions that are done: 
+The user can now register,login, create a game, destroy a game, sign a game, out a game, start a game once there are 10 people in the lobby. The teams are assigned by MMR, the game will be played, the game can be reported, and the game will close once 6 people agree on a report. The mmr is then updated. 
+
+Future things that need to be addressed
+1. what happens if a person signs a game by accident/a game can not be reported? make set of admin only commands?
+2. what happens if there is an error. we do not want the entire app to crash. do I use a bunch of try excepts or is there a higher level way.
+3. standardizing what features we want. this will affect the database schema and some of the reporting functions. ie) right now I have a field for wins/losses but it is not updated
+4. sending email verification to user. I know how to do this on a standard lamp server but not through heroku
+5. more styling 
+6. put it on heroku
+
+
 #### 8/19/2014 - Grant
 Added register functionality including simple error checking to avoid duplicating usernames or emailaddresses. Also modified the login.jade and register.jade views to include an error/success alert with a message depending on if the register proceeded correctly. 
 In the future will need to either use ajax or better routing to take the user back to the register page without losing the inputted information when the user fails to register properly. 
