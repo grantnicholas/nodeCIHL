@@ -11,7 +11,7 @@ exports.postLogin = function(req, res) {
 	var un = req.body.username;
 	var pass = req.body.password;
 	var db = req.db;
-	var chatroom = db.get('chatroom');
+	var chatroom = db.get('newchatroom');
 	chatroom.find({ $and: [{username : un}, {password : pass}] }, function(e,docs){
 
 		if(!docs[0]){ 
@@ -46,7 +46,7 @@ exports.postRegister = function(req, res) {
 	var un = req.body.username;
 	var pass = req.body.password;
 	var em = req.body.email;
-	var chatroom = req.db.get('chatroom');
+	var chatroom = req.db.get('newchatroom');
 	chatroom.find({username : un}, {}, function(e,docs){
 		if(docs[0]){ 
 			res.render('login', {title: 'login', status: 'Username in use: try another username', success: false}); 

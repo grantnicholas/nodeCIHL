@@ -13,8 +13,9 @@ var monk = require("monk");
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var cookieSession = require('cookie-session');
+var async = require('async');
 
-var db = monk("localhost:27017/chatroom");
+var db = monk("localhost:27017/newchatroom");
 
 //Load controllers.
 
@@ -46,6 +47,7 @@ app.use(function(req,res,next){
     req.io = io;
     req._ = _;
     req.participants = participants;
+    req.async = async;
     next();
 });
 
