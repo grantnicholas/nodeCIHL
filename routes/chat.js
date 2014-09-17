@@ -48,6 +48,8 @@ exports.postMessage = function(req, res) {
     });
   }
 
+
+
 //And sign out to leave a game 
   if(message == ".out"){
   	var respmessage = "";
@@ -59,6 +61,7 @@ exports.postMessage = function(req, res) {
 			}
 			if(isAlreadySigned){
 				chatroom.update({status : "lobby"}, {$pull: {players: {username : name} } });
+				chatroom.update({username: name}, {$set: {currentgameid: -1} });
 				respmessage += name + " has signed out of the game";
 				req.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
 			}
@@ -81,7 +84,7 @@ exports.postMessage = function(req, res) {
 			});
 		}
 		else{
-			respmessage += "Only one game can be created at a time"; 
+			respmessage += "Only one game can be created at a time. Sign the game with .sign"; 
 			req.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
 		}
 
@@ -167,8 +170,9 @@ var changeMMR = function(argz,upmmr,callback2){
 		if(typeof documents[0] != "undefined"){
 			if(documents[0].owner == name && documents[0].players.length == 10){
 				sortArray(documents[0].players,function(people){
-					chatroom.update({status: "lobby"},{ $set: {players : people} });
-					chatroom.update({status: "lobby"},{ $set: { status : "inProgress" }});
+					chatroom.update({status: "lobby"},{ $set: {players : people} }, function(er,d){
+						chatroom.update({status: "lobby"},{ $set: { status : "inProgress" }});
+					});
 
 					respmessage += "Signups are closed for gameID: " + documents[0].gameid;
 					respmessage += "\n Radiant: " + people[0].username + " | " +people[3].username + " | " +people[5].username + " | " + people[7].username + " | " + people[9].username;
@@ -237,7 +241,8 @@ var changeMMR = function(argz,upmmr,callback2){
 			    	loseMMR = 22.5;
 
 			    }else {
-			    	winMMR = 25; loseMMr = 25;
+			    	winMMR = 25; 
+			    	loseMMR = 25;
 			    }
 
 			    if(win =='rad'){
@@ -293,8 +298,9 @@ var changeMMR = function(argz,upmmr,callback2){
 				for(var i in players){
 					if(players[i].username == name){result = players[i].result;}
 					if(players[i].result == 1){rad +=1;}
-					else if(players[i].result == -1){dire +=1;}
+					if(players[i].result == -1){dire +=1;}
 				}
+				console.log('thisistheradcount' + rad);
 				if(result == 0){
 					rad+=1;
 					respmessage += name + " has reported gameID " + docs[0].currentgameid + " for the radiant";
@@ -302,9 +308,23 @@ var changeMMR = function(argz,upmmr,callback2){
 					req.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
 					chatroom.update({$and: [{"players.username" : name},{"gameid" : docs[0].currentgameid} ]}, {"$set" : {"players.$.result" : 1} });
 				}
+
 				if(rad >5){
 					var gameClosed = "Gameid: " + docs[0].currentgameid + " has been won by the radiant"
 					chatroom.update({gameid : docs[0].currentgameid},{$set: {status : "closed"} });
+
+					for(var i in radindices){
+						chatroom.update({username: players[radindices[i]].username}, {$inc: {wins: 1} })
+						chatroom.update({username: players[radindices[i]].username}, {$set: {currentgameid: -1} });
+
+					}
+
+					for(var i in direindices){
+						chatroom.update({username: players[direindices[i]].username}, {$inc: {losses: 1} })
+						chatroom.update({username: players[direindices[i]].username}, {$set: {currentgameid: -1} });
+
+					}
+
 					req.io.sockets.emit("incomingMessage", {message: gameClosed, name: "cihl:"});
 					var mmr = [];
 					updateMMR(players,'rad',function(){
@@ -337,7 +357,7 @@ var changeMMR = function(argz,upmmr,callback2){
   }
     
 //Submit a win report for the dire. Essentially duplicates above function
-  if(message == ".dire"){
+  if(message == ".radiant"){
 	var respmessage = "";
 	chatroom.find({username : name}, {}, function(e,docs){
 		if(typeof docs[0] != "undefined"){
@@ -347,21 +367,36 @@ var changeMMR = function(argz,upmmr,callback2){
 				for(var i in players){
 					if(players[i].username == name){result = players[i].result;}
 					if(players[i].result == 1){rad +=1;}
-					else if(players[i].result == -1){dire +=1;}
+					if(players[i].result == -1){dire +=1;}
 				}
+				console.log('thisistheradcount' + rad);
 				if(result == 0){
-					dire+=1;
-					respmessage += name + " has reported gameID " + docs[0].currentgameid + " for the dire";
+					rad+=1;
+					respmessage += name + " has reported gameID " + docs[0].currentgameid + " for the radiant";
 					respmessage += "\n There are: " + rad + " votes for the radiant and " + dire + " votes for the dire";
 					req.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
 					chatroom.update({$and: [{"players.username" : name},{"gameid" : docs[0].currentgameid} ]}, {"$set" : {"players.$.result" : 1} });
 				}
-				if(dire >5){
+
+				if(dire>5){
 					var gameClosed = "Gameid: " + docs[0].currentgameid + " has been won by the dire"
 					chatroom.update({gameid : docs[0].currentgameid},{$set: {status : "closed"} });
+
+					for(var i in radindices){
+						chatroom.update({username: players[radindices[i]].username}, {$inc: {losses: 1} })
+						chatroom.update({username: players[radindices[i]].username}, {$set: {currentgameid: -1} });
+
+					}
+
+					for(var i in direindices){
+						chatroom.update({username: players[direindices[i]].username}, {$inc: {wins: 1} })
+						chatroom.update({username: players[direindices[i]].username}, {$set: {currentgameid: -1} });
+
+					}
+
 					req.io.sockets.emit("incomingMessage", {message: gameClosed, name: "cihl:"});
 					var mmr = [];
-					updateMMR(players,'rad',function(){
+					updateMMR(players,'dire',function(){
 						async.each(players,function(item, callback){
 								getObjFromName(item.username,function(obj){
 									mmr.push(obj);
@@ -396,6 +431,9 @@ var changeMMR = function(argz,upmmr,callback2){
 	chatroom.find({status : "lobby"}, {}, function(e,docs){
 		if(typeof docs[0] != "undefined"){
 			if(name == docs[0].owner){
+				for (var i in docs[0].players){
+					chatroom.update({username: docs[0].players[i].username}, {$set: {currentgameid: -1} } );
+				}
 				chatroom.remove({status : "lobby"});
 				respmessage += docs[0].gameid + " has been closed by " + name;
 				req.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );

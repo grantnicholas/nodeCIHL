@@ -43,9 +43,12 @@ exports.postRegister = function(req, res) {
 	if (req.session.user) {
 		return res.redirect('/chat');
 	}
+
 	var un = req.body.username;
 	var pass = req.body.password;
 	var em = req.body.email;
+	var dbuff = req.body.dotabuff;
+
 	var chatroom = req.db.get('newchatroom');
 	chatroom.find({username : un}, {}, function(e,docs){
 		if(docs[0]){ 
@@ -57,10 +60,27 @@ exports.postRegister = function(req, res) {
 					res.render('login', {title: 'login', status: 'Email in use: try another email', success: false})
 				}			
 				else{
-					var newuser = newusers = [{ "username" : un, "password" : pass, "currentgameid" : 0,  "mmr" : 3000, "wins" : 0, "losses" : 0, "email" : em, "loggedin" : 0 }];
+					var newuser = newusers = [{ "username" : un, "password" : pass, "currentgameid" : 0,  "mmr" : 3000, "wins" : 0, "losses" : 0, "email" : em, "loggedin" : 0, "dotabuff" : dbuff }];
 					chatroom.insert(newuser);
-					//var push = {locals: {title: 'login', status: 'Your account was created successfully'} };
-					//var push = {title: 'login', status: 'Your account has been successfully created'};
+
+					//send email. Password sent in plaintext = bad bad bad;
+					var transporter = req.transporter;
+					var mailOptions = {
+					    from: 'Grant Nicholas ✔ <grantnicholas2015@u.northwestern.edu>', // sender address
+					    to: ''+em+', grantnicholas2015@u.northwestern.edu', // list of receivers //kevinchen@u.northwestern.edu 
+					    subject: 'CIHL Account Registration Complete ', // Subject line
+					    text: 'The account:\n '+ un + ' has been created with password:\n '+ pass +'. ', // plaintext body
+					    html: 'The account:\n '+ un + ' has been created with password:\n '+ pass +'. ' // html body
+					};
+
+					transporter.sendMail(mailOptions, function(error, info){
+					    if(error){
+					        console.log(error);
+					    }else{
+					        console.log('Message sent: ' + info.response);
+					    }
+					});
+
 					res.render('login', {title: 'login', status: 'Your account has been successfully created', success: true});
 				}
 			}); 

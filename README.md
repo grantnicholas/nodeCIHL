@@ -13,6 +13,13 @@
 
 ### Changelog:
 
+#9-17-2014
+1. All bugs regarding creating/destroying/outing/submitting games should be fixed. There is a naive algorithm to assign teams and mmr gains/losses that can be improved on. 
+2. Emails are now sent following successful registration using nodemailer [check package.json]. Passwords are stored and sent in plaintext which is bad.  
+3. I added a quick button on the top navbar menu to help newusers out with commands. [ie) to join a game use .sign]
+4. Attempted to use pm2 to provide automatic app restart on app failure but it will not install for me. 
+5. Attempting to put on heroku. 
+
 #### 9/06-2014 - Grant
 I was having a bit of trouble with mongo and its large files sizes with git, for now we are ok but if the files grow any larger they will be greater than the 100mb limit github has.
 The chatroom collection is now called newchatroom and is located at ./data. So to run mongod `sudo mongod --dbpath nodeCIHL/data`. For CLI mongod run mongo then use newchatroom then you can run your queries as usual. In the databaseinit file I put some helpful commands I used to simulate having 10 people in a lobby to test the report functions. 

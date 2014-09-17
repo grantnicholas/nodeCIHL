@@ -14,6 +14,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var cookieSession = require('cookie-session');
 var async = require('async');
+var nodemailer = require('nodemailer');
 
 var db = monk("localhost:27017/newchatroom");
 
@@ -42,12 +43,23 @@ app.use(cookieSession({
   secret: 'ourSecret'
 }))
 
+// create reusable transporter object using SMTP transport
+var transporter = nodemailer.createTransport({
+  service: 'Gmail',
+  auth: {
+      user: 'grantnicholas2015@u.northwestern.edu',
+      pass: 'saga121212'
+  }
+});
+
+
 app.use(function(req,res,next){
     req.db = db;
     req.io = io;
     req._ = _;
     req.participants = participants;
     req.async = async;
+    req.transporter = transporter;
     next();
 });
 
