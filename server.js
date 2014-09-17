@@ -16,7 +16,7 @@ var cookieSession = require('cookie-session');
 var async = require('async');
 var nodemailer = require('nodemailer');
 
-var db = monk("localhost:27017/newchatroom");
+var db = monk( (process.env.MONGOHQ_URL || "localhost:27017/newchatroom") );
 
 //Load controllers.
 
@@ -27,7 +27,7 @@ var chatController = require('./routes/chat');
 
 //Server config.
 
-app.set("ipaddr", "127.0.0.1");
+//app.set("ipaddr", "127.0.0.1");
 app.set("port", (process.env.PORT || 8080) );
 app.set("views", __dirname + "/views");
 app.set("view engine", "jade");
@@ -95,7 +95,7 @@ io.on("connection", function(socket){
 });
 
 http.listen(app.get("port"), app.get("ipaddr"), function() {
-  console.log("Server up and running. Go to http://" + app.get("ipaddr") + ":" + app.get("port"));
+  console.log("Server up and running. Go to http://" + /*app.get("ipaddr") +*/ ":" + app.get("port"));
 });
 
 module.exports = app;
