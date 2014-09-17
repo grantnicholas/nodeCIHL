@@ -76,11 +76,20 @@ exports.postMessage = function(req, res) {
 	chatroom.find({status : "lobby"}, {}, function(e,documents){
 		if(typeof documents[0] == "undefined"){
 			chatroom.find({ $query: {gameid: {$exists: true} }, $orderby: { gameid: -1  } },function(e,docs){
-				var newgameid = docs[0].gameid + 1;
-				var newgame = [{ "gameid" : newgameid, "status": "lobby", "players" : [{username : name, result : 0}], "owner" : name }]
-				chatroom.insert(newgame);
-				respmessage += "Signups are open for gameID: " + newgameid;
-				req.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
+				if(typeof documents[0] != "undefined"){
+					var newgameid = docs[0].gameid + 1;
+					var newgame = [{ "gameid" : newgameid, "status": "lobby", "players" : [{username : name, result : 0}], "owner" : name }]
+					chatroom.insert(newgame);
+					respmessage += "Signups are open for gameID: " + newgameid;
+					req.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
+				}
+				else{
+					var newgameid = 0;
+					var newgame = [{ "gameid" : newgameid, "status": "lobby", "players" : [{username : name, result : 0}], "owner" : name }]
+					chatroom.insert(newgame);
+					respmessage += "Signups are open for gameID: " + newgameid;
+					req.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
+				}
 			});
 		}
 		else{
