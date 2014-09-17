@@ -66,8 +66,8 @@ exports.postRegister = function(req, res) {
 					//send email. Password sent in plaintext = bad bad bad;
 					var transporter = req.transporter;
 					var mailOptions = {
-					    from: 'Grant Nicholas ✔ <grantnicholas2015@u.northwestern.edu>', // sender address
-					    to: ''+em+', grantnicholas2015@u.northwestern.edu', // list of receivers //kevinchen@u.northwestern.edu 
+					    from: 'CIHL Robot ✔ <cihl.robot@gmail.com>', // sender address
+					    to: ''+em/*+', grantnicholas2015@u.northwestern.edu'*/, // list of receivers //kevinchen@u.northwestern.edu 
 					    subject: 'CIHL Account Registration Complete ', // Subject line
 					    text: 'The account:\n '+ un + ' has been created with password:\n '+ pass +'. ', // plaintext body
 					    html: 'The account:\n '+ un + ' has been created with password:\n '+ pass +'. ' // html body

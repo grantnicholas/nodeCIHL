@@ -47,8 +47,8 @@ app.use(cookieSession({
 var transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
-      user: 'grantnicholas2015@u.northwestern.edu',
-      pass: 'saga121212'
+      user: 'cihl.robot@gmail.com',
+      pass: 'robot<>robot'
   }
 });
 
