@@ -3,7 +3,9 @@ exports.getLogin = function(req, res) {
 		return res.redirect('/chat');
 	}
 	res.render('login', {
-		title: 'Login'
+	title: 'Login',
+	success: 0,
+	status: "Please login to enter the chatroom"
 	});
 };
 

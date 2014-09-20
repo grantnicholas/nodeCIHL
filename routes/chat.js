@@ -1,9 +1,15 @@
 exports.getChatroom = function(req, res) {
-	res.location('chat');
-	res.render('chat', {
-		title: 'Chat',
-		displayname: req.session.un
-	});
+	if (req.session.user) {
+		res.location('chat');
+		res.render('chat', {
+			title: 'Chat',
+			displayname: req.session.un
+		});
+	}
+	else{
+		res.redirect('/login');
+	}
+
 }
 
 exports.postMessage = function(req, res) {
@@ -482,6 +488,15 @@ var changeMMR = function(argz,upmmr,callback2){
     	});
   }
 
+  //Look up the stats of the top players in the league and display them in chat
+	var respmessage = "";
+	chatroom.find({$query: {},$orderby: {mmr: -1}},function(e,docs){
+		for(var i=0; i<10; i++){
+			respmessage += docs[i].username + " | mmr: " + docs[i].mmr + " | wins: " + docs[i].wins + " | losses: " + docs[i].losses + " -- ";
+		}
+		req.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
+    	});
+  }
 //Helper function I used to test aync functions
    if(message == ".getmmr"){
 	chatroom.find({gameid: 1 },function(e,doct){

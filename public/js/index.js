@@ -149,7 +149,7 @@ function init() {
   $('#send').on('click', sendMessage);
   
   $('#chathelp').click(function(){
-	alert("Chatroom commands: \n\nCreate a new game lobby: .create \nDestroy a game lobby[must be owner]: .destroy \nSign a game lobby: .sign \nOut a game lobby: .out \nList players in lobby: .lp \nCheck my stats: .me \nStart a game [when lobby has 10 players]: .start \nReport a game[min 6 reports]: .radiant or .dire");
+	alert("Chatroom commands: \n\nCreate a new game lobby: .create \nDestroy a game lobby[must be owner]: .destroy \nSign a game lobby: .sign \nOut a game lobby: .out \nList players in lobby: .lp \nCheck my stats: .me \n \nList top player stats: .top \nStart a game [when lobby has 10 players]: .start \nReport a game[min 6 reports]: .radiant or .dire");
   });
 
 }
