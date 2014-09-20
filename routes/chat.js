@@ -488,11 +488,12 @@ var changeMMR = function(argz,upmmr,callback2){
     	});
   }
 
-  //Look up the stats of the top players in the league and display them in chat
+  //Look up the stats of the top players and display them in chat
+  if(message == ".top"){
 	var respmessage = "";
 	chatroom.find({$query: {},$orderby: {mmr: -1}},function(e,docs){
 		for(var i=0; i<10; i++){
-			respmessage += docs[i].username + " | mmr: " + docs[i].mmr + " | wins: " + docs[i].wins + " | losses: " + docs[i].losses + " -- ";
+		respmessage += docs[i].username + " | mmr: " + docs[i].mmr + " | wins: " + docs[i].wins + " | losses: " + docs[i].losses + " -- ";
 		}
 		req.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
     	});
