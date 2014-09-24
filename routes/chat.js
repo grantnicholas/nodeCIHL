@@ -492,11 +492,20 @@ var changeMMR = function(argz,upmmr,callback2){
   if(message == ".top"){
 	var respmessage = "";
 	chatroom.find({$query: {},$orderby: {mmr: -1}},function(e,docs){
-		for(var i=0; i<10; i++){
-		respmessage += docs[i].username + " | mmr: " + docs[i].mmr + " | wins: " + docs[i].wins + " | losses: " + docs[i].losses + " -- ";
+
+		if(i>10){
+			for(var i=0; i<10; i++){
+				respmessage += 'rank: ' +i + ' | ' + docs[i].username + " | mmr: " + docs[i].mmr + " | wins: " + docs[i].wins + " | losses: " + docs[i].losses + " -- ";
+			}
+		}
+		else{
+			for(var i in docs){
+				respmessage += 'rank:' +i + ' | ' + docs[i].username + " | mmr: " + docs[i].mmr + " | wins: " + docs[i].wins + " | losses: " + docs[i].losses + " -- ";
+			}
+
 		}
 		req.io.sockets.emit("incomingMessage", {message: respmessage, name: "cihl:"}  );
-    	});
+	});
   }
 //Helper function I used to test aync functions
    if(message == ".getmmr"){
