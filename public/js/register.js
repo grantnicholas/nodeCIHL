@@ -2,8 +2,8 @@ function showAlert() {
     $("#myAlert").addClass("out");
 }
 
-$(document).ready($){
+jQuery(document).ready(function($){
 	window.setTimeout(function () {
    		showAlert();
 	}, 3000);
-}
+});

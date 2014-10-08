@@ -15,6 +15,8 @@ var cookieParser = require('cookie-parser');
 var cookieSession = require('cookie-session');
 var async = require('async');
 var nodemailer = require('nodemailer');
+var passwordHash = require('password-hash');
+var generatePassword = require('password-generator');
 
 var db = monk( (process.env.MONGOHQ_URL || "localhost:27017/newchatroom") );
 
@@ -22,12 +24,12 @@ var db = monk( (process.env.MONGOHQ_URL || "localhost:27017/newchatroom") );
 
 var homeController = require('./routes/home');
 var userController = require('./routes/user');
+var forgotpassController = require('./routes/forgotpass');
 var chatController = require('./routes/chat');
 
 
 //Server config.
 
-//app.set("ipaddr", "127.0.0.1");
 app.set("port", (process.env.PORT || 8080) );
 app.set("views", __dirname + "/views");
 app.set("view engine", "jade");
@@ -60,6 +62,8 @@ app.use(function(req,res,next){
     req.participants = participants;
     req.async = async;
     req.transporter = transporter;
+    req.passwordHash = passwordHash;
+    req.generatePassword = generatePassword;
     next();
 });
 
@@ -73,6 +77,8 @@ app.get('/register', userController.getRegister);
 app.post('/register', userController.postRegister);
 app.get('/chat', chatController.getChatroom);
 app.post('/chat', chatController.postMessage);
+app.get('/forgotpass', forgotpassController.getForgotPass);
+app.post('/forgotpass', forgotpassController.postForgotPass);
 
 /* Socket IO events
 The basic idea with socket.io: socket.on("somepredefinedevent", function() {io.sockets.emit("emitThisInformationToAllClientsAndCaptureWithJquery", {the info emitted is json in here}); });

@@ -15,7 +15,7 @@ textarea {
     vertical-align: top;
 }
 
-#login {
+#login, #register{
 	margin-right: 1em;
 }
 
